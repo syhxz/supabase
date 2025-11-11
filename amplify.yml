@@ -3,19 +3,19 @@ frontend:
   phases:
     preBuild:
       commands:
-        - echo "Installing pnpm..."
-        - npm install -g pnpm
-        - echo "Installing dependencies..."
-        - pnpm install
+        - corepack enable
+        - corepack prepare pnpm@latest --activate
+        - pnpm install --frozen-lockfile
     build:
       commands:
-        - echo "Building studio application..."
-        - pnpm build:studio
+        - export NODE_OPTIONS="--max-old-space-size=65536"
+        - pnpm turbo build --filter=studio
+        - echo '{"version":1,"routes":[{"handle":"filesystem"},{"src":"/.*","dest":"/404","status":404}]}' > apps/studio/deploy-manifest.json
   artifacts:
-    baseDirectory: apps/studio/.next
+    baseDirectory: apps/studio
     files:
       - '**/*'
   cache:
     paths:
       - node_modules/**/*
-      - apps/studio/.next/cache/**/*
+      - .pnpm-store/**/*
