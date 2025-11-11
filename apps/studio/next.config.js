@@ -29,14 +29,23 @@ function getAssetPrefix() {
 /**
  * @type {import('next').NextConfig}
  */
-const nextConfig = {
+/**const nextConfig = {
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
   assetPrefix: getAssetPrefix(),
   output: 'standalone',
   experimental: {
     webpackBuildWorker: true,
   },
-  async rewrites() {
+*/
+const nextConfig = {
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH,
+  assetPrefix: getAssetPrefix(),
+  output: 'export',  // 改为 export
+  trailingSlash: true,
+  experimental: {
+    webpackBuildWorker: true,
+  },
+  /*async rewrites() {
     return [
       {
         source: `/.well-known/vercel/flags`,
@@ -483,9 +492,10 @@ const nextConfig = {
         headers: [{ key: 'content-type', value: 'text/typescript' }],
       },
     ]
-  },
+  },*/
   images: {
     // to make Vercel avatars work without issue. Vercel uses SVGs for users who don't have set avatars.
+    unoptimized: true,
     dangerouslyAllowSVG: false,
     remotePatterns: [
       {
@@ -569,7 +579,7 @@ const nextConfig = {
 // module.exports = withBundleAnalyzer(nextConfig)
 // Make sure adding Sentry options is the last code to run before exporting, to
 // ensure that your source maps include changes from all other Webpack plugins
-module.exports =
+/*module.exports =
   process.env.NEXT_PUBLIC_IS_PLATFORM === 'true'
     ? withSentryConfig(withBundleAnalyzer(nextConfig), {
         silent: true,
@@ -598,3 +608,5 @@ module.exports =
         automaticVercelMonitors: true,
       })
     : nextConfig
+*/
+module.exports = nextConfig
