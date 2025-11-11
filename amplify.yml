@@ -1,0 +1,21 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - echo "Installing pnpm..."
+        - npm install -g pnpm
+        - echo "Installing dependencies..."
+        - pnpm install
+    build:
+      commands:
+        - echo "Building studio application..."
+        - pnpm build:studio
+  artifacts:
+    baseDirectory: apps/studio/.next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+      - apps/studio/.next/cache/**/*
