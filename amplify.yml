@@ -3,14 +3,21 @@ frontend:
   phases:
     preBuild:
       commands:
+        - echo "Cleaning up to reduce memory usage"
+        - rm -rf .git/objects/pack/*.pack 2>/dev/null || true
+        - git gc --aggressive --prune=now 2>/dev/null || true
         - corepack enable
         - corepack prepare pnpm@latest --activate
-        - pnpm install --frozen-lockfile
+        - pnpm install --frozen-lockfile --prefer-offline
     build:
       commands:
-        - export NODE_OPTIONS="--max-old-space-size=65536"
-        - pnpm turbo build --filter=studio
+        - export NODE_OPTIONS="--max-old-space-size=65536 --max-semi-space-size=128"
+        - export NODE_ENV=production
+        - pnpm turbo build --filter=studio --no-cache
         - echo '{"version":1,"routes":[{"handle":"filesystem"},{"src":"/.*","dest":"/404","status":404}]}' > apps/studio/deploy-manifest.json
+        - find apps/studio/out -name "*.map" -delete
+        - find apps/studio/out -name "*.js" -exec gzip -9 {} \;
+        - du -sh apps/studio/out
   artifacts:
     baseDirectory: apps/studio
     files:
