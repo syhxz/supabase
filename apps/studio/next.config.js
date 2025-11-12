@@ -38,12 +38,21 @@ function getAssetPrefix() {
   },
 */
 const nextConfig = {
+  // Ensure consistent builds
+  generateBuildId: async () => {
+    // Use timestamp or commit hash for consistent builds
+    return process.env.BUILD_ID || 'static-build-id'
+  },
+  
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
   assetPrefix: getAssetPrefix(),
-  output: 'export',  // 改为 export
+  output: 'export',
   trailingSlash: true,
+  
+  // Prevent build cache issues
   experimental: {
     webpackBuildWorker: true,
+    isrMemoryCacheSize: 0,
   },
   /*async rewrites() {
     return [
